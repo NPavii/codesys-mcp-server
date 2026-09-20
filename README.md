@@ -81,7 +81,7 @@ npx codesys-mcp --stdio
 
 | Переменная | Назначение | По умолчанию |
 |---|---|---|
-| `CODESYS_EXE` | Путь к CODESYS.exe | `D:\CoDeSyS inst\CODESYS\Common\CODESYS.exe` |
+| `CODESYS_EXE` | Путь к CODESYS.exe | авто-поиск в `C:\Program Files\CODESYS` |
 | `CODESYS_PROFILE` | Имя установленного профиля | `CODESYS V3.5 SP21 Patch 1` |
 | `CODESYS_BRIDGE_DIR` | Папка моста (bridge.py) | `<пакет>/bridge` |
 | `CODESYS_BRIDGE_TIMEOUT_MS` | Таймаут вызова | `240000` |

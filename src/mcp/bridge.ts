@@ -1,5 +1,5 @@
 import { spawn } from "node:child_process";
-import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -21,8 +21,40 @@ export interface BridgeResult {
   data: unknown;
 }
 
-const DEFAULT_EXE = "D:\\CoDeSyS inst\\CODESYS\\Common\\CODESYS.exe";
 const DEFAULT_PROFILE = "CODESYS V3.5 SP21 Patch 1";
+const EXE_SEARCH_ROOTS = ["C:\\Program Files\\CODESYS", "C:\\Program Files (x86)\\CODESYS"];
+
+/** Locate CODESYS.exe: env override first, then a shallow search under the
+ * usual install roots. Returns "" when nothing is found (callers report a
+ * clear error instead of launching a bogus path). */
+function findCodesysExe(dir: string, depth: number): string | null {
+  if (depth > 3) return null;
+  let entries;
+  try {
+    entries = readdirSync(dir, { withFileTypes: true });
+  } catch {
+    return null;
+  }
+  for (const e of entries) {
+    const p = path.join(dir, e.name);
+    if (e.isDirectory()) {
+      const hit = findCodesysExe(p, depth + 1);
+      if (hit) return hit;
+    } else if (e.name.toLowerCase() === "codesys.exe") {
+      return p;
+    }
+  }
+  return null;
+}
+
+function resolveCodesysExe(): string {
+  if (process.env.CODESYS_EXE) return process.env.CODESYS_EXE;
+  for (const root of EXE_SEARCH_ROOTS) {
+    const hit = findCodesysExe(root, 0);
+    if (hit) return hit;
+  }
+  return "";
+}
 
 function moduleRoot(): string {
   // <root>/src/mcp/bridge.ts  or  <root>/dist/src/mcp/bridge.js
@@ -32,7 +64,7 @@ function moduleRoot(): string {
 export function loadBridgeConfig(): BridgeConfig {
   const root = moduleRoot();
   return {
-    codesysExe: process.env.CODESYS_EXE ?? DEFAULT_EXE,
+    codesysExe: resolveCodesysExe(),
     codesysProfile: process.env.CODESYS_PROFILE ?? DEFAULT_PROFILE,
     bridgeDir: process.env.CODESYS_BRIDGE_DIR ?? path.join(root, "bridge"),
     timeoutMs: Number.parseInt(process.env.CODESYS_BRIDGE_TIMEOUT_MS ?? "240000", 10)
@@ -175,6 +207,15 @@ export async function runBridgeTask(task: BridgeTask): Promise<BridgeResult> {
 }
 
 async function runBridgeTaskCold(task: BridgeTask, config: BridgeConfig): Promise<BridgeResult> {
+  if (!config.codesysExe) {
+    return {
+      ok: false,
+      error:
+        "CODESYS.exe not found. Set the CODESYS_EXE env var to the full path of CODESYS.exe " +
+        "(e.g. C:\\Program Files\\CODESYS\\...\\CODESYS.exe).",
+      data: null
+    };
+  }
   const bridgePy = path.join(config.bridgeDir, "bridge.py");
   if (!existsSync(bridgePy)) {
     return {

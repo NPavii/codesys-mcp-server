@@ -4,7 +4,7 @@
 import time
 import os
 
-HB = r"D:\KimiData\kimi\Workspaces\CoDeSyS\CodeSYS-MCP\bridge\smoke_heartbeat.txt"
+HB = os.path.join(os.path.dirname(os.path.abspath(__file__)), "smoke_heartbeat.txt")
 DURATION = 180.0
 INTERVAL = 2.0
 
