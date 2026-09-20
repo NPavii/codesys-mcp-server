@@ -40,7 +40,8 @@ export function createApp(config: AppConfig) {
   app.get("/healthz", (_req, res) => {
     res.json({
       ok: true,
-      name: "codesys-docs",
+      name: "codesys-mcp",
+      version: "0.2.0",
       officialLookupEnabled: config.officialLookupEnabled
     });
   });

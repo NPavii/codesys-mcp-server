@@ -25,8 +25,8 @@ function asTextResult(value: Record<string, unknown>) {
 
 export function createCodesysMcpServer(config: AppConfig): McpServer {
   const server = new McpServer({
-    name: "codesys-docs",
-    version: "0.1.0"
+    name: "codesys-mcp",
+    version: "0.2.0"
   });
 
   server.registerTool(
