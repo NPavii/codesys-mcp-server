@@ -20,7 +20,7 @@ describe("HTTP server", () => {
     const response = await request(app).get("/healthz").expect(200);
 
     expect(response.body.ok).toBe(true);
-    expect(response.body.name).toBe("codesys-docs");
+    expect(response.body.name).toBe("codesys-mcp");
   });
 
   it("allows MCP initialize and tools/list", async () => {
