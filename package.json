@@ -1,0 +1,62 @@
+{
+  "name": "codesys-mcp-server",
+  "version": "0.2.0",
+  "description": "MCP server for CODESYS V3 PLC development: project automation (POUs, DUTs, GVLs, build, libraries, alarms, online read/write/force) plus CODESYS documentation search.",
+  "type": "module",
+  "files": [
+    "dist/src/",
+    "bin/",
+    "bridge/",
+    "README.md"
+  ],
+  "bin": {
+    "codesys-mcp": "./bin/codesys-mcp.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "prepublishOnly": "npm run build",
+    "dev": "tsx watch src/index.ts",
+    "start": "node dist/src/index.js",
+    "start:stdio": "node dist/src/cli.js --stdio",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "eslint src/ test/",
+    "format": "prettier --write 'src/**/*.ts' 'test/**/*.ts'",
+    "format:check": "prettier --check 'src/**/*.ts' 'test/**/*.ts'"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "cheerio": "^1.0.0",
+    "express": "^4.19.2",
+    "minisearch": "^7.1.0",
+    "pdf-parse": "^2.4.5",
+    "zod": "^3.25.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.14.10",
+    "@types/pdfkit": "^0.17.6",
+    "@types/supertest": "^7.2.0",
+    "eslint": "^10.2.1",
+    "eslint-config-prettier": "^10.1.8",
+    "pdfkit": "^0.18.0",
+    "prettier": "^3.8.3",
+    "supertest": "^7.0.0",
+    "tsx": "^4.16.2",
+    "typescript": "^5.5.3",
+    "typescript-eslint": "^8.59.0",
+    "vitest": "^1.6.0"
+  },
+  "keywords": [
+    "codesys",
+    "plc",
+    "iec-61131-3",
+    "structured-text",
+    "mcp",
+    "automation"
+  ]
+}
