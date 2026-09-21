@@ -41,7 +41,7 @@ export function createApp(config: AppConfig) {
     res.json({
       ok: true,
       name: "codesys-mcp",
-      version: "0.2.0",
+      version: "0.3.0",
       officialLookupEnabled: config.officialLookupEnabled
     });
   });

@@ -72,12 +72,18 @@ if not _warm.strip():
         _warm = ""
 if _warm.strip():
     for p in [x.strip() for x in _warm.split(";") if x.strip()]:
+        # A leading '*' marks the project's warm-up open as PRIMARY.
+        # SP21 finding: textual_declaration/implementations are WRITABLE only
+        # in the primary project - with no primary, every set_code NREs.
+        prim = p.startswith("*")
+        if prim:
+            p = p[1:].strip()
         r = {"ok": False, "error": "not attempted"}
         for attempt in (1, 2, 3):
             try:
                 r = run_task({"op": "open_project",
                               "args": {"path": p, "keep_open": True, "no_save": True,
-                                       "primary": False}},
+                                       "primary": False if not prim else None}},
                              state)
             except Exception as e:
                 r = {"ok": False, "error": str(e)}
